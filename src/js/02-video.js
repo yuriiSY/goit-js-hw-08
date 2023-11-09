@@ -2,7 +2,7 @@ import Player from '@vimeo/player';
 import throttle from 'lodash.throttle';
 
 const player = document.querySelector('#vimeo-player');
-
+const serializedState = localStorage.getItem('videoplayer-current-time');
 const iframePlayer = new Player(player);
 
 iframePlayer.on(
@@ -16,12 +16,13 @@ iframePlayer.on(
   }, 1000)
 );
 
-let serializedState = localStorage.getItem('videoplayer-current-time');
-try {
-  serializedState =
-    serializedState === null ? undefined : JSON.parse(serializedState);
-} catch (err) {
-  console.log(err);
-}
+checkParse(serializedState);
+iframePlayer.setCurrentTime(Number(checkParse(serializedState)));
 
-iframePlayer.setCurrentTime(Number(currentTime));
+function checkParse(state) {
+  try {
+    return JSON.parse(state);
+  } catch (err) {
+    console.log(err);
+  }
+}
